@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+
+{% block title %}ثبت نظر{% endblock %}
+
+{% block content %}
+
+<div class="review-form-container">
+
+    <div class="review-form-card">
+
+        <div class="review-form-header">
+            <h1>ثبت نظر درباره پزشک</h1>
+
+            <p>
+                دکتر
+                {{ appointment.doctor.first_name }}
+                {{ appointment.doctor.last_name }}
+            </p>
+        </div>
+
+        <div class="review-appointment-info">
+
+            <div>
+                <span>تخصص</span>
+                <strong>
+                    {{ appointment.doctor.specialty }}
+                </strong>
+            </div>
+
+            <div>
+                <span>تاریخ ویزیت</span>
+                <strong>
+                    {{ appointment.appointment_date }}
+                </strong>
+            </div>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="review-form-field">
+
+                <label for="{{ form.rating.id_for_label }}">
+                    امتیاز شما
+                </label>
+
+                {{ form.rating }}
+
+                {% if form.rating.errors %}
+                    <div class="review-form-error">
+                        {{ form.rating.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="review-form-field">
+
+                <label for="{{ form.comment.id_for_label }}">
+                    نظر شما
+                </label>
+
+                {{ form.comment }}
+
+                {% if form.comment.errors %}
+                    <div class="review-form-error">
+                        {{ form.comment.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="review-form-actions">
+
+                <button type="submit">
+                    ثبت نظر
+                </button>
+
+                <a href="{% url 'patient:visit_history' %}">
+                    انصراف
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

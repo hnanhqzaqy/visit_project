@@ -1,0 +1,150 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    پروفایل پزشک
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container doctor-profile">
+
+    <h1>پروفایل پزشک</h1>
+
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <div class="profile-field">
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+            {% for error in form.first_name.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+            {% for error in form.last_name.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.medical_system_number.label_tag }}
+            {{ form.medical_system_number }}
+            {% for error in form.medical_system_number.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.specialty.label_tag }}
+            {{ form.specialty }}
+            {% for error in form.specialty.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.experience_years.label_tag }}
+            {{ form.experience_years }}
+            {% for error in form.experience_years.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <!-- اطلاعات پرداخت -->
+
+        <div class="profile-field">
+            {{ form.consultation_fee.label_tag }}
+            {{ form.consultation_fee }}
+
+            <small class="image-help">
+                هزینه ویزیت را به تومان وارد کنید.
+            </small>
+
+            {% for error in form.consultation_fee.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.payment_policy.label_tag }}
+            {{ form.payment_policy }}
+
+            <small class="image-help">
+                در صورت انتخاب پرداخت ۳۰ درصدی، بیمار ۳۰ درصد هزینه ویزیت را آنلاین پرداخت می‌کند و باقی‌مانده در مطب پرداخت خواهد شد.
+            </small>
+
+            {% for error in form.payment_policy.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.bio.label_tag }}
+            {{ form.bio }}
+            {% for error in form.bio.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+            {{ form.clinic_address.label_tag }}
+            {{ form.clinic_address }}
+            {% for error in form.clinic_address.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+        </div>
+
+        <div class="profile-field">
+
+            <label for="id_profile_image">
+                تصویر پروفایل
+            </label>
+
+            {% if doctor.profile_image %}
+                <div class="current-profile-image">
+                    <img
+                        src="{{ doctor.profile_image.url }}"
+                        alt="تصویر پروفایل پزشک"
+                    >
+                </div>
+            {% endif %}
+
+            {{ form.profile_image }}
+
+            <small class="image-help">
+                یک تصویر مناسب برای پروفایل خود انتخاب کنید.
+            </small>
+
+            {% for error in form.profile_image.errors %}
+                <div class="message error">{{ error }}</div>
+            {% endfor %}
+
+        </div>
+
+        <button type="submit">
+            ذخیره اطلاعات
+        </button>
+
+    </form>
+
+    <p>
+        <a href="{% url 'doctor:dashboard' %}">
+            بازگشت به پنل پزشک
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}

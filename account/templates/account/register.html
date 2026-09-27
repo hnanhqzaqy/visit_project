@@ -1,0 +1,65 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    ثبت‌نام
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>ثبت‌نام</h1>
+
+    {% if success %}
+        <p>
+            ثبت‌نام با موفقیت انجام شد.
+            حساب شما پس از تأیید شماره موبایل فعال خواهد شد.
+        </p>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        {{ form.non_field_errors }}
+
+        <div>
+            {{ form.phone.label_tag }}
+            {{ form.phone }}
+
+            {% for error in form.phone.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.password.label_tag }}
+            {{ form.password }}
+
+            {% for error in form.password.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <div>
+            {{ form.password_confirm.label_tag }}
+            {{ form.password_confirm }}
+
+            {% for error in form.password_confirm.errors %}
+                <p>{{ error }}</p>
+            {% endfor %}
+        </div>
+
+        <button type="submit">
+            ثبت‌نام
+        </button>
+    <p>
+    پزشک هستید؟
+    <a href="{% url 'doctor:register' %}">
+        ثبت‌نام به عنوان پزشک
+    </a>
+</p>
+    </form>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,104 @@
+{% extends 'base.html' %}
+
+{% block title %}برنامه کاری پزشکان{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>برنامه کاری پزشکان</h1>
+            <p>مشاهده برنامه کاری ثبت‌شده برای پزشکان</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>پزشک</th>
+                    <th>روز هفته</th>
+                    <th>ساعت شروع</th>
+                    <th>ساعت پایان</th>
+                    <th>مدت هر نوبت</th>
+                    <th>وضعیت</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for schedule in schedules %}
+
+                    <tr>
+
+                        <td>
+                            {{ schedule.doctor.first_name }}
+                            {{ schedule.doctor.last_name }}
+                        </td>
+
+                        <td>
+                            {% if schedule.day_of_week == 5 %}
+                                شنبه
+                            {% elif schedule.day_of_week == 6 %}
+                                یکشنبه
+                            {% elif schedule.day_of_week == 0 %}
+                                دوشنبه
+                            {% elif schedule.day_of_week == 1 %}
+                                سه‌شنبه
+                            {% elif schedule.day_of_week == 2 %}
+                                چهارشنبه
+                            {% elif schedule.day_of_week == 3 %}
+                                پنجشنبه
+                            {% elif schedule.day_of_week == 4 %}
+                                جمعه
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ schedule.start_time|time:"H:i" }}
+                        </td>
+
+                        <td>
+                            {{ schedule.end_time|time:"H:i" }}
+                        </td>
+
+                        <td>
+                            {{ schedule.appointment_duration }} دقیقه
+                        </td>
+
+                        <td>
+                            {% if schedule.is_active %}
+                                <span class="admin-status approved">
+                                    فعال
+                                </span>
+                            {% else %}
+                                <span class="admin-status rejected">
+                                    غیرفعال
+                                </span>
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            هنوز برنامه کاری ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

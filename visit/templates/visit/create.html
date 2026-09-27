@@ -1,0 +1,90 @@
+{% extends 'base.html' %}
+
+{% block title %}ثبت ویزیت بیمار{% endblock %}
+
+{% block content %}
+
+<div class="visit-form-container">
+
+    <div class="visit-form-card">
+
+        <div class="visit-form-header">
+
+            <h1>ثبت ویزیت بیمار</h1>
+
+            <p>
+                ثبت اطلاعات ویزیت برای
+                دکتر {{ appointment.doctor.first_name }}
+                {{ appointment.doctor.last_name }}
+            </p>
+
+        </div>
+
+        <div class="visit-patient-info">
+
+            <div>
+                <span>بیمار</span>
+
+                <strong>
+                    {{ appointment.patient.patient_profile.first_name }}
+                    {{ appointment.patient.patient_profile.last_name }}
+                </strong>
+            </div>
+
+            <div>
+                <span>تاریخ نوبت</span>
+
+                <strong>
+                    {{ appointment.appointment_date }}
+                </strong>
+            </div>
+
+            <div>
+                <span>ساعت</span>
+
+                <strong>
+                    {{ appointment.start_time|time:"H:i" }}
+                    تا
+                    {{ appointment.end_time|time:"H:i" }}
+                </strong>
+            </div>
+
+        </div>
+
+        <form method="post">
+
+            {% csrf_token %}
+
+            <div class="visit-form-field">
+
+                {{ form.patient_complaint.label_tag }}
+
+                {{ form.patient_complaint }}
+
+                {% if form.patient_complaint.errors %}
+                    <div class="visit-form-error">
+                        {{ form.patient_complaint.errors }}
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="visit-form-actions">
+
+                <button type="submit">
+                    ثبت ویزیت
+                </button>
+
+                <a href="{% url 'doctor:appointments' %}">
+                    انصراف
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

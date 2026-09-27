@@ -1,0 +1,137 @@
+{% extends 'base.html' %}
+
+{% block title %}سوابق ویزیت{% endblock %}
+
+{% block content %}
+
+<div class="patient-appointments-container">
+
+    <div class="patient-page-header">
+
+        <div>
+
+            <h1>
+                سوابق ویزیت
+            </h1>
+
+            <p>
+                مشاهده ویزیت‌های انجام‌شده شما
+            </p>
+
+        </div>
+
+    </div>
+
+
+    {% if appointments %}
+
+        <div class="patient-appointments-list">
+
+            {% for appointment in appointments %}
+
+                <div class="patient-appointment-card">
+
+                    <div class="patient-appointment-header">
+
+                        <div>
+
+                            <h2>
+                                دکتر
+                                {{ appointment.doctor.first_name }}
+                                {{ appointment.doctor.last_name }}
+                            </h2>
+
+                            <span>
+                                {{ appointment.doctor.specialty }}
+                            </span>
+
+                        </div>
+
+                        <div class="appointment-status">
+
+                            <span class="status-completed">
+                                انجام شده
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="patient-appointment-info">
+
+                        <div>
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong>
+                                {{ appointment.jalali_date }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                ساعت
+                            </span>
+
+                            <strong>
+                                {{ appointment.start_time|time:"H:i" }}
+                                تا
+                                {{ appointment.end_time|time:"H:i" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+           <div class="patient-appointment-actions">
+
+    <a
+        href="{% url 'patient:visit_detail' appointment.id %}"
+        class="patient-book-appointment-button"
+    >
+        مشاهده گزارش ویزیت
+    </a>
+
+    {% if not appointment.review %}
+        <a
+            href="{% url 'review:create' appointment.id %}"
+            class="patient-review-button"
+        >
+            ثبت نظر
+        </a>
+    {% else %}
+        <span class="patient-review-submitted">
+            ✓ نظر ثبت شده است
+        </span>
+    {% endif %}
+
+</div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="patient-no-appointments">
+
+            <p>
+                هنوز ویزیت انجام‌شده‌ای برای شما ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

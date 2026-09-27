@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% block title %}سوابق بیماران{% endblock %}
+
+{% block content %}
+
+<div class="doctor-appointments-container">
+
+    <div class="doctor-page-header">
+
+        <h1>
+            سوابق بیماران
+        </h1>
+
+        <p>
+            نوبت‌ها و ویزیت‌های انجام‌شده
+        </p>
+
+    </div>
+
+
+    {% if appointments %}
+
+        <div class="doctor-appointments-list">
+
+            {% for appointment in appointments %}
+
+                <div class="doctor-appointment-card">
+
+                    <div class="doctor-appointment-header">
+
+                        <div>
+
+                            <h2>
+                                {{ appointment.patient_name }}
+                            </h2>
+
+                            <span>
+                                {{ appointment.patient.phone }}
+                            </span>
+
+                        </div>
+
+                        <div class="appointment-status">
+
+                            <span class="status-completed">
+                                انجام شده
+                            </span>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="doctor-appointment-info">
+
+                        <div>
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong>
+                                {{ appointment.jalali_date }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                ساعت
+                            </span>
+
+                            <strong>
+                                {{ appointment.start_time|time:"H:i" }}
+                                تا
+                                {{ appointment.end_time|time:"H:i" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if appointment.patient_note %}
+
+                        <div class="doctor-appointment-note">
+
+                            <span>
+                                توضیحات بیمار
+                            </span>
+
+                            <p>
+                                {{ appointment.patient_note }}
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <div class="doctor-appointment-actions">
+
+                        <a
+                            href="{% url 'doctor:visit_detail' appointment.id %}"
+                            class="appointment-visit-button"
+                        >
+                            مشاهده گزارش ویزیت
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-appointments">
+
+            <p>
+                هنوز سابقه ویزیت انجام‌شده‌ای وجود ندارد.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

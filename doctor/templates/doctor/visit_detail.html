@@ -1,0 +1,83 @@
+{% extends 'base.html' %}
+
+{% block title %}گزارش ویزیت بیمار{% endblock %}
+
+{% block content %}
+
+<div class="visit-form-container">
+
+    <div class="visit-form-card">
+
+        <div class="visit-form-header">
+
+            <h1>
+                گزارش ویزیت بیمار
+            </h1>
+
+            <p>
+                مشاهده اطلاعات ثبت‌شده در ویزیت
+            </p>
+
+        </div>
+
+
+        <div class="visit-patient-info">
+
+            <div>
+                <span>بیمار</span>
+
+                <strong>
+                    {{ appointment.patient.patient_profile.first_name }}
+                    {{ appointment.patient.patient_profile.last_name }}
+                </strong>
+            </div>
+
+
+            <div>
+                <span>تاریخ نوبت</span>
+
+                <strong>
+                    {{ appointment.jalali_date }}
+                </strong>
+            </div>
+
+
+            <div>
+                <span>ساعت</span>
+
+                <strong>
+                    {{ appointment.start_time|time:"H:i" }}
+                    تا
+                    {{ appointment.end_time|time:"H:i" }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="visit-report-section">
+
+            <h2>
+                شکایت اصلی بیمار
+            </h2>
+
+            <div class="visit-report-content">
+                {{ visit.patient_complaint|linebreaks }}
+            </div>
+
+        </div>
+
+
+        <div class="visit-form-actions">
+
+            <a href="{% url 'doctor:patient_history' %}">
+                بازگشت به سوابق بیماران
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

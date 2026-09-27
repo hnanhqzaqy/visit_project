@@ -1,0 +1,176 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    پروفایل بیمار
+{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/jalalidatepicker.min.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container patient-profile">
+
+    <h1>پروفایل بیمار</h1>
+
+    <form method="post" enctype="multipart/form-data">
+
+        {% csrf_token %}
+
+        {% if form.non_field_errors %}
+            <div class="messages">
+                {% for error in form.non_field_errors %}
+                    <div class="message error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+
+        <div class="profile-field">
+            {{ form.first_name.label_tag }}
+            {{ form.first_name }}
+
+            {% for error in form.first_name.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+            {{ form.last_name.label_tag }}
+            {{ form.last_name }}
+
+            {% for error in form.last_name.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+            {{ form.national_code.label_tag }}
+            {{ form.national_code }}
+
+            {% for error in form.national_code.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+            {{ form.birth_date.label_tag }}
+
+            <input
+                type="text"
+                name="birth_date"
+                id="id_birth_date"
+                value="{{ form.birth_date.value|default:'' }}"
+                placeholder="مثلاً 1380/05/15"
+                autocomplete="off"
+                data-jdp
+                data-jdp-only-date
+            >
+
+            {% for error in form.birth_date.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+            {{ form.gender.label_tag }}
+            {{ form.gender }}
+
+            {% for error in form.gender.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+            {{ form.address.label_tag }}
+            {{ form.address }}
+
+            {% for error in form.address.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+
+
+        <div class="profile-field">
+
+            <label for="id_profile_image">
+                تصویر پروفایل
+            </label>
+
+            {% if patient.profile_image %}
+                <div class="current-profile-image">
+                    <img
+                        src="{{ patient.profile_image.url }}"
+                        alt="تصویر پروفایل"
+                    >
+                </div>
+            {% endif %}
+
+            {{ form.profile_image }}
+
+            <small class="image-help">
+                یک تصویر برای پروفایل خود انتخاب کنید.
+            </small>
+
+            {% for error in form.profile_image.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+
+        </div>
+
+
+        <button type="submit">
+            ذخیره اطلاعات
+        </button>
+
+    </form>
+
+
+    <p>
+        <a href="{% url 'patient:dashboard' %}">
+            بازگشت به پنل بیمار
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}
+
+
+{% block extra_js %}
+
+<script src="{% static 'js/jalalidatepicker.min.js' %}"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+
+        jalaliDatepicker.startWatch({
+            persianDigits: false
+        });
+
+    });
+</script>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends 'base.html' %}
+
+{% block title %}نوبت‌های امروز{% endblock %}
+
+{% block content %}
+
+<div class="doctor-appointments-container">
+
+    <div class="doctor-page-header">
+
+        <h1>
+            نوبت‌های امروز
+        </h1>
+
+        <p>
+            {{ jalali_date }}
+        </p>
+
+    </div>
+
+
+    {% if appointments %}
+
+        <div class="doctor-appointments-list">
+
+            {% for appointment in appointments %}
+
+                <div class="doctor-appointment-card">
+
+                    <div class="doctor-appointment-header">
+
+                        <div>
+
+                            <h2>
+                                {{ appointment.patient_name }}
+                            </h2>
+
+                            <span>
+                                {{ appointment.patient.phone }}
+                            </span>
+
+                        </div>
+
+                        <div class="appointment-status">
+
+                            {% if appointment.status == 'pending' %}
+
+                                <span class="status-pending">
+                                    در انتظار تأیید
+                                </span>
+
+                            {% elif appointment.status == 'confirmed' %}
+
+                                <span class="status-confirmed">
+                                    تأیید شده
+                                </span>
+
+                            {% elif appointment.status == 'cancelled' %}
+
+                                <span class="status-cancelled">
+                                    لغو شده
+                                </span>
+
+                            {% elif appointment.status == 'completed' %}
+
+                                <span class="status-completed">
+                                    انجام شده
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="doctor-appointment-info">
+
+                        <div>
+
+                            <span>
+                                ساعت
+                            </span>
+
+                            <strong>
+                                {{ appointment.start_time|time:"H:i" }}
+                                تا
+                                {{ appointment.end_time|time:"H:i" }}
+                            </strong>
+
+                        </div>
+
+                        <div>
+
+                            <span>
+                                توضیحات
+                            </span>
+
+                            <strong>
+                                {% if appointment.patient_note %}
+                                    دارد
+                                {% else %}
+                                    ندارد
+                                {% endif %}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-appointments">
+
+            <p>
+                برای امروز هیچ نوبتی ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

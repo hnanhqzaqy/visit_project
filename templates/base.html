@@ -1,0 +1,106 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>{% block title %}سیستم نوبت‌دهی پزشکی{% endblock %}</title>
+<link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/vazirmatn@33.0.3/Vazirmatn-font-face.css"
+>
+    <link rel="stylesheet" href="{% static 'css/base.css' %}">
+<link rel="stylesheet" href="{% static 'css/jalalidatepicker.min.css' %}">
+{% block extra_css %}
+{% endblock %}
+
+</head>
+
+<body>
+
+<header>
+    <nav class="main-navbar">
+
+        <div class="navbar-right">
+            <a href="{% url 'core:home' %}" class="navbar-brand">
+                سیستم نوبت‌دهی پزشکی
+            </a>
+        </div>
+
+        <div class="navbar-left">
+
+            <a href="{% url 'core:home' %}">
+                خانه
+            </a>
+{% if user.is_authenticated %}
+
+    {% if user.is_staff %}
+
+        <a href="{% url 'admin_panel:dashboard' %}">
+            پنل مدیریت
+        </a>
+
+    {% else %}
+
+        {% if user.role == 'patient' %}
+            <a href="{% url 'patient:dashboard' %}">پنل کاربری</a>
+            <a href="{% url 'patient:profile' %}">پروفایل من</a>
+        {% endif %}
+
+        {% if user.role == 'doctor' %}
+            <a href="{% url 'doctor:dashboard' %}">پنل کاربری</a>
+            <a href="{% url 'doctor:profile' %}">پروفایل من</a>
+        {% endif %}
+
+    {% endif %}
+
+    <form method="post"
+          action="{% url 'account:logout' %}"
+          class="navbar-logout-form">
+
+        {% csrf_token %}
+
+        <button type="submit" class="navbar-logout">
+            خروج
+        </button>
+
+    </form>
+
+{% else %}
+
+    <a href="{% url 'account:login' %}">ورود</a>
+    <a href="{% url 'account:register' %}">ثبت‌نام</a>
+
+{% endif %}
+
+        </div>
+
+    </nav>
+</header>
+
+<main>
+{% if messages %}
+    <div class="messages">
+        {% for message in messages %}
+            <div class="message {{ message.tags }}">
+                {{ message }}
+            </div>
+        {% endfor %}
+    </div>
+{% endif %}
+    {% block content %}
+    {% endblock %}
+</main>
+
+<footer>
+    <p>سیستم نوبت‌دهی پزشکی</p>
+</footer>
+{% block extra_js %}
+{% endblock %}
+
+<script src="{% static 'js/main.js' %}"></script>
+
+</body>
+</html>

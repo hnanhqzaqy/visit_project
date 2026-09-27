@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت کاربران{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت کاربران</h1>
+            <p>مشاهده کاربران ثبت‌شده در سیستم</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>شماره موبایل</th>
+                    <th>نقش</th>
+                    <th>وضعیت</th>
+                    <th>کارمند</th>
+                    <th>تاریخ عضویت</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for user in users %}
+
+                    <tr>
+                        <td>{{ user.phone }}</td>
+
+                        <td>
+                            {% if user.role == 'doctor' %}
+                                پزشک
+                            {% else %}
+                                بیمار
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if user.is_active %}
+                                فعال
+                            {% else %}
+                                غیرفعال
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {% if user.is_staff %}
+                                بله
+                            {% else %}
+                                خیر
+                            {% endif %}
+                        </td>
+
+                   <td>{{ user.jalali_date_joined }}</td>
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="5">
+                            هنوز کاربری ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

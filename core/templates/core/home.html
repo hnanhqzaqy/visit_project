@@ -1,0 +1,408 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    سیستم نوبت‌دهی پزشکی
+{% endblock %}
+
+{% block content %}
+
+<!-- Hero -->
+<section class="home-hero">
+
+    <div class="home-hero-content">
+
+        <div class="home-hero-text">
+
+            <span class="home-hero-badge">
+                سامانه نوبت‌دهی پزشکی
+            </span>
+
+            <h1>
+                پزشک مناسب خود را پیدا کنید
+                و نوبت خود را آنلاین رزرو کنید
+            </h1>
+
+            <p>
+                به‌راحتی پزشک موردنظر خود را بر اساس نام یا تخصص پیدا کنید،
+                برنامه کاری او را ببینید و نوبت مناسب خود را رزرو کنید.
+            </p>
+
+            <div class="home-hero-actions">
+
+                <a
+                    href="{% url 'doctor:list' %}"
+                    class="home-primary-button"
+                >
+                    مشاهده پزشکان
+                </a>
+
+                {% if not user.is_authenticated %}
+                    <a
+                        href="{% url 'account:register' %}"
+                        class="home-secondary-button"
+                    >
+                        ایجاد حساب کاربری
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="home-hero-card">
+
+            <div class="home-hero-card-icon">
+                🩺
+            </div>
+
+            <h2>
+                مراقبت بهتر، نوبت آسان‌تر
+            </h2>
+
+            <p>
+                انتخاب پزشک، مشاهده زمان‌های خالی و مدیریت نوبت‌ها
+                در یک سامانه ساده و یکپارچه.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- Search -->
+<section class="home-section home-search-section">
+
+    <div class="home-section-header">
+
+        <span>
+            جستجوی پزشک
+        </span>
+
+        <h2>
+            پزشک موردنظر خود را پیدا کنید
+        </h2>
+
+        <p>
+            نام پزشک یا تخصص موردنظر خود را جستجو کنید.
+        </p>
+
+    </div>
+
+    <form
+        method="get"
+        action="{% url 'doctor:list' %}"
+        class="home-search-form"
+    >
+
+        <input
+            type="search"
+            name="search"
+            value="{{ search }}"
+            placeholder="نام پزشک یا تخصص..."
+            aria-label="جستجوی پزشک"
+        >
+
+        <button type="submit">
+            جستجو
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- Specialties -->
+<section class="home-section">
+
+    <div class="home-section-header">
+
+        <span>
+            تخصص‌ها
+        </span>
+
+        <h2>
+            انتخاب بر اساس تخصص
+        </h2>
+
+        <p>
+            پزشک موردنظر خود را از میان تخصص‌های موجود پیدا کنید.
+        </p>
+
+    </div>
+
+
+    {% if specialties %}
+
+        <div class="home-specialties">
+
+            {% for specialty in specialties %}
+
+                <a
+                    href="{% url 'doctor:list' %}?search={{ specialty|urlencode }}"
+                    class="home-specialty-card"
+                >
+
+                    <div class="home-specialty-icon">
+                        🩺
+                    </div>
+
+                    <strong>
+                        {{ specialty }}
+                    </strong>
+
+                    <span>
+                        مشاهده پزشکان
+                    </span>
+
+                </a>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="home-empty-state">
+            هنوز تخصصی ثبت نشده است.
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- Top Doctors -->
+<section class="home-section home-doctors-section">
+
+    <div class="home-section-header">
+
+        <span>
+            پزشکان برتر
+        </span>
+
+        <h2>
+            پزشکان منتخب بیماران
+        </h2>
+
+        <p>
+            پزشکانی که بر اساس امتیاز و نظرات واقعی بیماران
+            بیشترین رضایت را داشته‌اند.
+        </p>
+
+    </div>
+
+
+    {% if top_doctors %}
+
+        <div class="home-doctors-grid">
+
+            {% for doctor in top_doctors %}
+
+                <div class="home-doctor-card">
+
+                    <div class="home-doctor-image">
+
+                        {% if doctor.profile_image %}
+
+                            <img
+                                src="{{ doctor.profile_image.url }}"
+                                alt="دکتر {{ doctor.first_name }} {{ doctor.last_name }}"
+                            >
+
+                        {% else %}
+
+                            <div class="home-default-doctor-image">
+                                👨‍⚕️
+                            </div>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="home-doctor-content">
+
+                        <h3>
+                            دکتر
+                            {{ doctor.first_name }}
+                            {{ doctor.last_name }}
+                        </h3>
+
+                        <span class="home-doctor-specialty">
+                            {{ doctor.specialty }}
+                        </span>
+
+
+                        <div class="home-doctor-rating">
+
+                            <strong>
+                                ⭐ {{ doctor.average_rating|floatformat:1 }}
+                            </strong>
+
+                            <span>
+                                {{ doctor.review_count }} نظر
+                            </span>
+
+                        </div>
+
+
+                        <a
+                            href="{% url 'doctor:detail' doctor.id %}"
+                            class="home-doctor-button"
+                        >
+                            مشاهده پروفایل
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+
+        <div class="home-section-footer">
+
+            <a
+                href="{% url 'doctor:list' %}"
+                class="home-outline-button"
+            >
+                مشاهده همه پزشکان
+            </a>
+
+        </div>
+
+    {% else %}
+
+        <div class="home-empty-state">
+            هنوز پزشک دارای امتیاز ثبت نشده است.
+        </div>
+
+    {% endif %}
+
+</section>
+
+
+<!-- Why Us -->
+<section class="home-section home-features-section">
+
+    <div class="home-section-header">
+
+        <span>
+            امکانات سامانه
+        </span>
+
+        <h2>
+            چرا از این سامانه استفاده کنیم؟
+        </h2>
+
+    </div>
+
+
+    <div class="home-features-grid">
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                🔎
+            </div>
+
+            <h3>
+                جستجوی آسان پزشک
+            </h3>
+
+            <p>
+                پزشک موردنظر خود را بر اساس نام یا تخصص
+                به‌سرعت پیدا کنید.
+            </p>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                📅
+            </div>
+
+            <h3>
+                رزرو نوبت آنلاین
+            </h3>
+
+            <p>
+                زمان‌های کاری پزشک را مشاهده کرده و
+                نوبت مناسب خود را رزرو کنید.
+            </p>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                📋
+            </div>
+
+            <h3>
+                مدیریت نوبت‌ها
+            </h3>
+
+            <p>
+                نوبت‌ها و سوابق ویزیت خود را در پنل کاربری
+                مدیریت و مشاهده کنید.
+            </p>
+
+        </div>
+
+
+        <div class="home-feature-card">
+
+            <div class="home-feature-icon">
+                ⭐
+            </div>
+
+            <h3>
+                امتیاز و نظرات واقعی
+            </h3>
+
+            <p>
+                تجربه بیماران قبلی را ببینید و با اطمینان
+                بیشتری پزشک خود را انتخاب کنید.
+            </p>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- CTA -->
+<section class="home-cta">
+
+    <div class="home-cta-content">
+
+        <h2>
+            آماده رزرو نوبت هستید؟
+        </h2>
+
+        <p>
+            پزشک مناسب خود را پیدا کنید و نوبت خود را
+            به‌سادگی رزرو کنید.
+        </p>
+
+        <a
+            href="{% url 'doctor:list' %}"
+            class="home-cta-button"
+        >
+            شروع جستجوی پزشک
+        </a>
+
+    </div>
+
+</section>
+
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت نظرات{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت نظرات</h1>
+            <p>مشاهده نظرات ثبت‌شده برای پزشکان</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>پزشک</th>
+                    <th>امتیاز</th>
+                    <th>نظر</th>
+                    <th>تاریخ ثبت</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for review in reviews %}
+
+                    <tr>
+
+                        <td>
+                            {{ review.appointment.doctor.first_name }}
+                            {{ review.appointment.doctor.last_name }}
+                        </td>
+
+                        <td>
+                            {{ review.rating }} از ۵
+                        </td>
+
+                        <td>
+                            {% if review.comment %}
+                                {{ review.comment }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ review.jalali_date }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="4">
+                            هنوز نظری ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

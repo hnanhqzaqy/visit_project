@@ -1,0 +1,317 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    پنل پزشک
+{% endblock %}
+
+{% block content %}
+
+<div class="doctor-dashboard-container">
+
+    <div class="doctor-welcome">
+
+        <div class="doctor-avatar">
+
+            {% if doctor.profile_image %}
+
+                <img
+                    src="{{ doctor.profile_image.url }}"
+                    alt="تصویر پروفایل پزشک"
+                >
+
+            {% else %}
+
+                <div class="default-doctor-avatar">
+                    👨‍⚕️
+                </div>
+
+            {% endif %}
+
+        </div>
+
+        <div class="doctor-welcome-text">
+
+            {% if doctor.first_name or doctor.last_name %}
+
+                <h1>
+                    دکتر
+                    {{ doctor.first_name }}
+                    {{ doctor.last_name }}
+                    عزیز
+                </h1>
+
+            {% else %}
+
+                <h1>خوش آمدید دکتر</h1>
+
+            {% endif %}
+
+            <p>
+                به پنل پزشک خود خوش آمدید.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="doctor-card">
+
+        <div class="doctor-card-header">
+            <h2>اطلاعات حساب</h2>
+        </div>
+
+        <div class="doctor-info-grid">
+
+            <div class="doctor-info-item">
+                <span>شماره موبایل</span>
+                <strong>{{ request.user.phone }}</strong>
+            </div>
+
+            <div class="doctor-info-item">
+                <span>نوع حساب</span>
+                <strong>پزشک</strong>
+            </div>
+
+            <div class="doctor-info-item">
+                <span>وضعیت حساب</span>
+
+                <strong class="status-active">
+                    {% if doctor.status == 'approved' %}
+                        تأیید شده
+                    {% elif doctor.status == 'rejected' %}
+                        رد شده
+                    {% else %}
+                        در انتظار بررسی
+                    {% endif %}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="doctor-card">
+
+        <div class="doctor-card-header">
+
+            <h2>اطلاعات حرفه‌ای</h2>
+
+            <a href="{% url 'doctor:profile' %}">
+                ویرایش اطلاعات
+            </a>
+
+        </div>
+
+        <div class="doctor-info-grid">
+
+            <div class="doctor-info-item">
+                <span>نام و نام خانوادگی</span>
+
+                <strong>
+                    {% if doctor.first_name or doctor.last_name %}
+                        {{ doctor.first_name }}
+                        {{ doctor.last_name }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </strong>
+            </div>
+
+
+            <div class="doctor-info-item">
+
+                <span>شماره نظام پزشکی</span>
+
+                <strong>
+                    {{ doctor.medical_system_number }}
+                </strong>
+
+            </div>
+
+
+            <div class="doctor-info-item">
+
+                <span>تخصص</span>
+
+                <strong>
+                    {{ doctor.specialty }}
+                </strong>
+
+            </div>
+
+
+            <div class="doctor-info-item">
+
+                <span>سابقه کاری</span>
+
+                <strong>
+                    {{ doctor.experience_years }} سال
+                </strong>
+
+            </div>
+
+
+            <div class="doctor-info-item doctor-info-full">
+
+                <span>معرفی پزشک</span>
+
+                <strong>
+                    {% if doctor.bio %}
+                        {{ doctor.bio }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </strong>
+
+            </div>
+
+
+            <div class="doctor-info-item doctor-info-full">
+
+                <span>آدرس مطب</span>
+
+                <strong>
+                    {% if doctor.clinic_address %}
+                        {{ doctor.clinic_address }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+<div class="doctor-card">
+
+    <div class="doctor-card-header">
+        <h2>دسترسی سریع</h2>
+    </div>
+
+
+    <div class="doctor-actions">
+
+        <a
+            href="{% url 'doctor:profile' %}"
+            class="doctor-action"
+        >
+            <strong>
+                پروفایل من
+            </strong>
+
+            <span>
+                مشاهده و ویرایش اطلاعات حرفه‌ای
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:schedule_list' %}"
+            class="doctor-action"
+        >
+            <strong>
+                برنامه کاری
+            </strong>
+
+            <span>
+                مدیریت روزها و ساعات کاری
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:appointments' %}"
+            class="doctor-action"
+        >
+            <strong>
+                نوبت‌های بیماران
+            </strong>
+
+            <span>
+                مشاهده، تأیید و لغو نوبت‌ها
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:patients' %}"
+            class="doctor-action"
+        >
+            <strong>
+                مدیریت بیماران
+            </strong>
+
+            <span>
+                مشاهده بیمارانی که برای شما نوبت گرفته‌اند
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:today_appointments' %}"
+            class="doctor-action"
+        >
+            <strong>
+                نوبت‌های امروز
+            </strong>
+
+            <span>
+                مشاهده برنامه و بیماران امروز
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:patient_history' %}"
+            class="doctor-action"
+        >
+            <strong>
+                سوابق بیماران
+            </strong>
+
+            <span>
+                مشاهده ویزیت‌ها و نوبت‌های انجام‌شده
+            </span>
+        </a>
+<a
+    href="{% url 'doctor:reviews' %}"
+    class="doctor-action"
+>
+    <strong>
+        نظرات بیماران
+    </strong>
+
+    <span>
+        مشاهده امتیاز و نظرات ثبت‌شده بیماران
+    </span>
+</a>
+    </div>
+
+</div>
+
+
+    <div class="doctor-logout">
+
+        <form
+            method="post"
+            action="{% url 'account:logout' %}"
+        >
+
+            {% csrf_token %}
+
+            <button type="submit">
+                خروج از حساب
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

@@ -1,0 +1,110 @@
+{% extends 'base.html' %}
+
+{% block title %}نظرات بیماران{% endblock %}
+
+{% block content %}
+
+<div class="doctor-reviews-container">
+
+    <div class="doctor-reviews-header">
+
+        <h1>
+            نظرات بیماران درباره دکتر
+            {{ doctor.first_name }}
+            {{ doctor.last_name }}
+        </h1>
+
+        <p>
+            {{ doctor.specialty }}
+        </p>
+
+        {% if doctor.review_count %}
+
+            <div class="doctor-rating-summary">
+
+                <strong>
+                    {{ doctor.average_rating|floatformat:1 }}
+                </strong>
+
+                <span>
+                    از ۵
+                </span>
+
+                <span>
+                    ({{ doctor.review_count }} نظر)
+                </span>
+
+            </div>
+
+        {% else %}
+
+            <p>
+                هنوز نظری برای این پزشک ثبت نشده است.
+            </p>
+
+        {% endif %}
+
+    </div>
+
+
+    {% if reviews %}
+
+        <div class="doctor-reviews-list">
+
+            {% for review in reviews %}
+
+                <div class="doctor-review-card">
+
+                   <div class="doctor-review-header">
+
+    <div>
+        <strong>
+            نظر بیمار
+        </strong>
+
+        <span class="doctor-review-date">
+            {{ review.jalali_date }}
+        </span>
+    </div>
+
+    <div class="doctor-review-rating">
+        {{ review.rating }} از ۵
+    </div>
+
+</div>
+
+                    {% if review.comment %}
+
+                        <div class="doctor-review-comment">
+                            {{ review.comment|linebreaks }}
+                        </div>
+
+                    {% else %}
+
+                        <div class="doctor-review-comment">
+                            بیمار متنی برای نظر خود ثبت نکرده است.
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-reviews">
+
+            <p>
+                هنوز نظری برای این پزشک ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

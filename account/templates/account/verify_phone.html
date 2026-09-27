@@ -1,0 +1,72 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block title %}
+    تأیید شماره موبایل
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>تأیید شماره موبایل</h1>
+
+    <p>
+        کد تأیید ارسال‌شده به شماره موبایل خود را وارد کنید.
+    </p>
+
+    {% if messages %}
+        <div class="messages">
+            {% for message in messages %}
+                <div class="message {{ message.tags }}">
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    {% if form.code.errors %}
+        <div class="messages">
+            {% for error in form.code.errors %}
+                <div class="message error">
+                    {{ error }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div>
+            {{ form.code.label_tag }}
+            {{ form.code }}
+        </div>
+
+        <button type="submit">
+            تأیید شماره موبایل
+        </button>
+    </form>
+
+    <div class="resend-code">
+        <p id="resend-text">
+            ارسال مجدد کد تا
+            <span id="countdown">120</span>
+            ثانیه دیگر
+        </p>
+
+        <a
+            id="resend-link"
+            href="{% url 'account:resend_register_code' %}"
+            style="display: none;"
+        >
+            ارسال مجدد کد
+        </a>
+    </div>
+
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/verification.js' %}"></script>
+{% endblock %}

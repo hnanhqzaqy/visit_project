@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت بیماران{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت بیماران</h1>
+            <p>مشاهده بیماران ثبت‌شده در سیستم</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>نام و نام خانوادگی</th>
+                    <th>شماره موبایل</th>
+                    <th>کد ملی</th>
+                    <th>تاریخ تولد</th>
+                    <th>جنسیت</th>
+                    <th>تاریخ ثبت‌نام</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for patient in patients %}
+
+                    <tr>
+
+                        <td>
+                            {{ patient.first_name }}
+                            {{ patient.last_name }}
+                        </td>
+
+                        <td>
+                            {{ patient.user.phone }}
+                        </td>
+
+                        <td>
+                            {% if patient.national_code %}
+                                {{ patient.national_code }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+              <td>{{ patient.jalali_birth_date }}</td>
+
+                        <td>
+                            {% if patient.gender == 'male' %}
+                                مرد
+                            {% elif patient.gender == 'female' %}
+                                زن
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+<td>{{ patient.jalali_created_at }}</td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            هنوز بیماری ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

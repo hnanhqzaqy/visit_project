@@ -1,0 +1,305 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    پنل بیمار
+{% endblock %}
+
+{% block content %}
+
+<div class="patient-dashboard-container">
+
+    <!-- هدر پنل -->
+
+    <div class="patient-welcome">
+
+        <div class="patient-avatar">
+
+            {% if patient.profile_image %}
+                <img
+                    src="{{ patient.profile_image.url }}"
+                    alt="تصویر پروفایل بیمار"
+                >
+            {% else %}
+                <div class="default-avatar">
+                    👤
+                </div>
+            {% endif %}
+
+        </div>
+
+        <div class="patient-welcome-text">
+
+            {% if patient.first_name or patient.last_name %}
+
+                <h1>
+                    سلام
+                    {{ patient.first_name }}
+                    {{ patient.last_name }}
+                    عزیز
+                </h1>
+
+            {% else %}
+
+                <h1>
+                    خوش آمدید
+                </h1>
+
+            {% endif %}
+
+            <p>
+                به پنل کاربری خود خوش آمدید.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- اطلاعات حساب -->
+
+    <div class="patient-card">
+
+        <div class="patient-card-header">
+            <h2>اطلاعات حساب</h2>
+        </div>
+
+        <div class="patient-info-grid">
+
+            <div class="patient-info-item">
+                <span>شماره موبایل</span>
+                <strong>
+                    {{ request.user.phone }}
+                </strong>
+            </div>
+
+            <div class="patient-info-item">
+                <span>نوع حساب</span>
+                <strong>
+                    بیمار
+                </strong>
+            </div>
+
+            <div class="patient-info-item">
+                <span>وضعیت حساب</span>
+                <strong class="status-active">
+                    فعال
+                </strong>
+            </div>
+
+            <div class="patient-info-item">
+                <span>تاریخ عضویت</span>
+              <strong>
+    {{ jalali_joined_date }}
+</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- اطلاعات شخصی -->
+
+    <div class="patient-card">
+
+        <div class="patient-card-header">
+
+            <h2>
+                اطلاعات شخصی
+            </h2>
+
+            <a href="{% url 'patient:profile' %}">
+                ویرایش اطلاعات
+            </a>
+
+        </div>
+
+
+        <div class="patient-info-grid">
+
+            <div class="patient-info-item">
+
+                <span>
+                    نام و نام خانوادگی
+                </span>
+
+                <strong>
+
+                    {% if patient.first_name or patient.last_name %}
+
+                        {{ patient.first_name }}
+                        {{ patient.last_name }}
+
+                    {% else %}
+
+                        ثبت نشده
+
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="patient-info-item">
+
+                <span>
+                    کد ملی
+                </span>
+
+                <strong>
+
+                    {% if patient.national_code %}
+                        {{ patient.national_code }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="patient-info-item">
+
+                <span>
+                    تاریخ تولد
+                </span>
+
+                <strong>
+
+                    {% if jalali_birth_date %}
+                        {{ jalali_birth_date }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="patient-info-item">
+
+                <span>
+                    جنسیت
+                </span>
+
+                <strong>
+
+                    {% if patient.gender %}
+                        {{ patient.get_gender_display }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+
+            <div class="patient-info-item patient-info-full">
+
+                <span>
+                    آدرس
+                </span>
+
+                <strong>
+
+                    {% if patient.address %}
+                        {{ patient.address }}
+                    {% else %}
+                        ثبت نشده
+                    {% endif %}
+
+                </strong>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- دسترسی‌های سریع -->
+
+<div class="patient-card">
+
+    <div class="patient-card-header">
+        <h2>دسترسی سریع</h2>
+    </div>
+
+    <div class="patient-actions">
+
+        <a
+            href="{% url 'patient:profile' %}"
+            class="patient-action"
+        >
+            <strong>
+                پروفایل من
+            </strong>
+
+            <span>
+                مشاهده و ویرایش اطلاعات شخصی
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'doctor:list' %}"
+            class="patient-action"
+        >
+            <strong>
+                پزشکان
+            </strong>
+
+            <span>
+                مشاهده پزشکان و رزرو نوبت
+            </span>
+        </a>
+
+
+        <a
+            href="{% url 'patient:appointments' %}"
+            class="patient-action"
+        >
+            <strong>
+                نوبت‌های من
+            </strong>
+
+            <span>
+                مشاهده و پیگیری نوبت‌های ثبت‌شده
+            </span>
+        </a>
+
+
+       <a href="{% url 'patient:visit_history' %}" class="patient-action">
+    <strong>سوابق ویزیت</strong>
+    <span>مشاهده ویزیت‌ها و گزارش‌های پزشکی</span>
+</a>
+
+    </div>
+
+</div>
+    <!-- خروج -->
+
+    <div class="patient-logout">
+
+        <form
+            method="post"
+            action="{% url 'account:logout' %}"
+        >
+
+            {% csrf_token %}
+
+            <button type="submit">
+                خروج از حساب
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+{% endblock %}

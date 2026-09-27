@@ -1,0 +1,86 @@
+{% extends 'base.html' %}
+
+{% block title %}پزشکان{% endblock %}
+
+{% block content %}
+
+<div class="doctor-list-container">
+
+    <div class="doctor-list-header">
+        <h1>پزشکان</h1>
+        <p>پزشک موردنظر خود را جستجو کنید.</p>
+    </div>
+
+    <form method="get" class="doctor-search-form">
+
+        <input
+            type="text"
+            name="search"
+            value="{{ search }}"
+            placeholder="نام پزشک یا تخصص را وارد کنید..."
+        >
+
+        <button type="submit">
+            جستجو
+        </button>
+
+    </form>
+    {% if doctors %}
+
+        <div class="doctor-list-grid">
+
+            {% for doctor in doctors %}
+
+                <div class="doctor-list-card">
+
+                    <div class="doctor-list-image">
+                        {% if doctor.profile_image %}
+                            <img src="{{ doctor.profile_image.url }}"
+                                 alt="تصویر {{ doctor.first_name }} {{ doctor.last_name }}">
+                        {% else %}
+                            <div class="default-doctor-list-image">
+                                👨‍⚕️
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="doctor-list-info">
+
+                        <h2>
+                            دکتر {{ doctor.first_name }} {{ doctor.last_name }}
+                        </h2>
+
+                        <p>
+                            <span>تخصص:</span>
+                            {{ doctor.specialty }}
+                        </p>
+
+                        <p>
+                            <span>سابقه کاری:</span>
+                            {{ doctor.experience_years }} سال
+                        </p>
+
+                        <a href="{% url 'doctor:detail' doctor.id %}"
+                           class="doctor-list-button">
+                            مشاهده پروفایل
+                        </a>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-empty">
+            <p>در حال حاضر پزشک تأییدشده‌ای وجود ندارد.</p>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

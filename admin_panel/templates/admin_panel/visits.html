@@ -1,0 +1,89 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت ویزیت‌ها{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت ویزیت‌ها</h1>
+            <p>مشاهده ویزیت‌های ثبت‌شده در سیستم</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>پزشک</th>
+                    <th>بیمار</th>
+                    <th>تاریخ نوبت</th>
+                    <th>ساعت</th>
+                    <th>شرح مشکل</th>
+                    <th>تاریخ ثبت ویزیت</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for visit in visits %}
+
+                    <tr>
+
+                        <td>
+                            {{ visit.appointment.doctor.first_name }}
+                            {{ visit.appointment.doctor.last_name }}
+                        </td>
+
+                        <td>
+                            {{ visit.appointment.patient.patient_profile.first_name }}
+                            {{ visit.appointment.patient.patient_profile.last_name }}
+                        </td>
+
+                    <td>
+    {{ visit.jalali_appointment_date }}
+</td>
+
+                        <td>
+                            {{ visit.appointment.start_time|time:"H:i" }}
+                            تا
+                            {{ visit.appointment.end_time|time:"H:i" }}
+                        </td>
+
+                        <td>
+                            {% if visit.complaint %}
+                                {{ visit.complaint }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            {{ visit.jalali_date }}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            هنوز ویزیتی ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

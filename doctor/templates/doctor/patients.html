@@ -1,0 +1,57 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت بیماران{% endblock %}
+
+{% block content %}
+
+<div class="doctor-appointments-container">
+
+    <div class="doctor-page-header">
+        <h1>مدیریت بیماران</h1>
+
+        <p>
+            بیمارانی که برای شما نوبت ثبت کرده‌اند
+        </p>
+    </div>
+
+    {% if patients %}
+
+        <div class="doctor-patients-list">
+
+            {% for patient in patients %}
+
+                <div class="doctor-patient-card">
+
+                    <div>
+                        <h2>
+                            {{ patient.patient_profile.first_name }}
+                            {{ patient.patient_profile.last_name }}
+                        </h2>
+
+                        <span>
+                            شماره موبایل:
+                            {{ patient.phone }}
+                        </span>
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-appointments">
+
+            <p>
+                هنوز بیماری برای شما ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

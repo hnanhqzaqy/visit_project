@@ -1,0 +1,111 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت نوبت‌ها{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت نوبت‌ها</h1>
+            <p>مشاهده نوبت‌های ثبت‌شده در سیستم</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>پزشک</th>
+                    <th>بیمار</th>
+                    <th>تاریخ</th>
+                    <th>ساعت</th>
+                    <th>وضعیت</th>
+                    <th>توضیحات بیمار</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for appointment in appointments %}
+
+                    <tr>
+
+                        <td>
+                            {{ appointment.doctor.first_name }}
+                            {{ appointment.doctor.last_name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.patient.patient_profile.first_name }}
+                            {{ appointment.patient.patient_profile.last_name }}
+                        </td>
+
+                        <td>
+                            {{ appointment.jalali_date }}
+                        </td>
+
+                        <td>
+                            {{ appointment.start_time|time:"H:i" }}
+                            تا
+                            {{ appointment.end_time|time:"H:i" }}
+                        </td>
+
+                        <td>
+
+                            {% if appointment.status == 'pending' %}
+                                <span class="admin-status pending">
+                                    در انتظار تأیید
+                                </span>
+
+                            {% elif appointment.status == 'confirmed' %}
+                                <span class="admin-status approved">
+                                    تأیید شده
+                                </span>
+
+                            {% elif appointment.status == 'cancelled' %}
+                                <span class="admin-status rejected">
+                                    لغو شده
+                                </span>
+
+                            {% elif appointment.status == 'completed' %}
+                                <span class="admin-status approved">
+                                    انجام شده
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+                            {% if appointment.patient_note %}
+                                {{ appointment.patient_note }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            هنوز نوبتی ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

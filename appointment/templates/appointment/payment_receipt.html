@@ -1,0 +1,178 @@
+{% extends 'base.html' %}
+
+{% block title %}رسید پرداخت{% endblock %}
+
+{% block content %}
+
+<div class="receipt-page">
+
+    <div class="receipt-card">
+
+        <div class="receipt-header">
+            <h1>رسید پرداخت</h1>
+            <p>سیستم نوبت‌دهی پزشکی</p>
+        </div>
+
+        <div class="receipt-success">
+            پرداخت با موفقیت تأیید شده است
+        </div>
+
+        <div class="receipt-section">
+
+            <h2>اطلاعات پرداخت</h2>
+
+            <div class="receipt-row">
+                <span>شماره رسید</span>
+                <strong>#{{ payment.id }}</strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>وضعیت پرداخت</span>
+                <strong class="receipt-success-text">
+                    {{ payment.get_status_display }}
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>مبلغ پرداخت‌شده</span>
+                <strong>
+                    {{ payment.amount|floatformat:0 }} تومان
+                </strong>
+            </div>
+
+            {% if payment.tracking_code %}
+                <div class="receipt-row">
+                    <span>شماره پیگیری</span>
+                    <strong>{{ payment.tracking_code }}</strong>
+                </div>
+            {% endif %}
+
+            {% if payment.paid_at %}
+                <div class="receipt-row">
+                    <span>تاریخ تأیید پرداخت</span>
+                    <strong>
+                        {{ payment.paid_at|date:"Y/m/d - H:i" }}
+                    </strong>
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="receipt-section">
+
+            <h2>اطلاعات نوبت</h2>
+
+            <div class="receipt-row">
+                <span>پزشک</span>
+                <strong>
+                    {{ appointment.doctor.first_name }}
+                    {{ appointment.doctor.last_name }}
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>تخصص</span>
+                <strong>
+                    {{ appointment.doctor.specialty }}
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>تاریخ نوبت</span>
+                <strong>
+                    {{ appointment.jalali_date }}
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>ساعت نوبت</span>
+                <strong>
+                    {{ appointment.start_time|time:"H:i" }}
+                    تا
+                    {{ appointment.end_time|time:"H:i" }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="receipt-section">
+
+            <h2>اطلاعات بیمار</h2>
+
+            <div class="receipt-row">
+                <span>نام بیمار</span>
+                <strong>
+                    {{ appointment.patient.patient_profile.first_name }}
+                    {{ appointment.patient.patient_profile.last_name }}
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>شماره موبایل</span>
+                <strong>
+                    {{ appointment.patient.phone }}
+                </strong>
+            </div>
+
+        </div>
+
+
+        <div class="receipt-section">
+
+            <h2>جزئیات مبلغ</h2>
+
+            <div class="receipt-row">
+                <span>مبلغ کل ویزیت</span>
+                <strong>
+                    {{ appointment.total_amount|floatformat:0 }}
+                    تومان
+                </strong>
+            </div>
+
+            <div class="receipt-row">
+                <span>مبلغ پرداخت‌شده</span>
+                <strong>
+                    {{ appointment.paid_amount|floatformat:0 }}
+                    تومان
+                </strong>
+            </div>
+
+            {% if appointment.remaining_amount > 0 %}
+                <div class="receipt-row">
+                    <span>مبلغ باقی‌مانده</span>
+                    <strong>
+                        {{ appointment.remaining_amount|floatformat:0 }}
+                        تومان
+                    </strong>
+                </div>
+            {% endif %}
+
+        </div>
+
+
+        <div class="receipt-actions">
+
+            <button
+                type="button"
+                class="receipt-print-button"
+                onclick="window.print()"
+            >
+                چاپ رسید
+            </button>
+
+            <a
+                href="{% url 'patient:appointments' %}"
+                class="receipt-back-button"
+            >
+                بازگشت به نوبت‌های من
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

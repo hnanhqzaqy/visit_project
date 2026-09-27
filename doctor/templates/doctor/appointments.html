@@ -1,0 +1,398 @@
+{% extends 'base.html' %}
+
+{% block title %}نوبت‌های بیماران{% endblock %}
+
+{% block content %}
+
+<div class="doctor-appointments-container">
+
+    <div class="doctor-page-header">
+
+        <h1>
+            نوبت‌های بیماران
+        </h1>
+
+        <p>
+            مدیریت و پیگیری نوبت‌های ثبت‌شده برای شما
+        </p>
+
+    </div>
+
+
+    {% if appointments %}
+
+        <div class="doctor-appointments-list">
+
+            {% for appointment in appointments %}
+
+                <div class="doctor-appointment-card">
+
+                    <div class="doctor-appointment-header">
+
+                        <div>
+
+                            <h2>
+                                {{ appointment.patient.patient_profile.first_name }}
+                                {{ appointment.patient.patient_profile.last_name }}
+                            </h2>
+
+                            <span>
+                                {{ appointment.patient.phone }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="appointment-status">
+
+                            {% if appointment.status == 'pending' %}
+
+                                <span class="status-pending">
+                                    در انتظار تأیید
+                                </span>
+
+                            {% elif appointment.status == 'confirmed' %}
+
+                                <span class="status-confirmed">
+                                    تأیید شده
+                                </span>
+
+                            {% elif appointment.status == 'cancelled' %}
+
+                                <span class="status-cancelled">
+                                    لغو شده
+                                </span>
+
+                            {% elif appointment.status == 'completed' %}
+
+                                <span class="status-completed">
+                                    انجام شده
+                                </span>
+
+                            {% else %}
+
+                                <span>
+                                    {{ appointment.get_status_display }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="doctor-appointment-info">
+
+                        <div>
+
+                            <span>
+                                تاریخ
+                            </span>
+
+                            <strong>
+                                {{ appointment.jalali_date }}
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                ساعت
+                            </span>
+
+                            <strong>
+                                {{ appointment.start_time|time:"H:i" }}
+                                تا
+                                {{ appointment.end_time|time:"H:i" }}
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- اطلاعات پرداخت -->
+
+                    <div class="doctor-payment-info">
+
+                        <div>
+
+                            <span>
+                                مبلغ کل ویزیت
+                            </span>
+
+                            <strong>
+                                {{ appointment.total_amount|floatformat:0 }}
+                                تومان
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                روش پرداخت
+                            </span>
+
+                            <strong>
+
+                                {% if appointment.payment_policy == 'full' %}
+
+                                    پرداخت کامل
+
+                                {% elif appointment.payment_policy == 'deposit' %}
+
+                                    پرداخت ۳۰ درصدی
+
+                                {% else %}
+
+                                    {{ appointment.get_payment_policy_display }}
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                مبلغ پرداخت‌شده
+                            </span>
+
+                            <strong>
+                                {{ appointment.paid_amount|floatformat:0 }}
+                                تومان
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                مبلغ باقی‌مانده
+                            </span>
+
+                            <strong>
+                                {{ appointment.remaining_amount|floatformat:0 }}
+                                تومان
+                            </strong>
+
+                        </div>
+
+
+                        <div>
+
+                            <span>
+                                وضعیت پرداخت
+                            </span>
+
+                            <strong>
+
+                                {% if appointment.payment_status == 'partial' %}
+
+                                    پرداخت بخشی
+
+                                {% elif appointment.payment_status == 'paid' %}
+
+                                    پرداخت کامل
+
+                                {% elif appointment.payment_status == 'pending' %}
+
+                                    پرداخت نشده
+
+                                {% elif appointment.payment_status == 'failed' %}
+
+                                    پرداخت ناموفق
+
+                                {% elif appointment.payment_status == 'refunded' %}
+
+                                    بازپرداخت شده
+
+                                {% else %}
+
+                                    {{ appointment.get_payment_status_display }}
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    {% if appointment.payment_status == 'partial' %}
+
+                        <div class="doctor-appointment-payment-message">
+
+                            <p>
+                                بیمار ۳۰ درصد هزینه ویزیت را آنلاین پرداخت کرده
+                                و مبلغ باقی‌مانده باید در مطب پرداخت شود.
+                            </p>
+
+                        </div>
+
+                    {% elif appointment.payment_status == 'paid' %}
+
+                        <div class="doctor-appointment-payment-message">
+
+                            <p>
+                                هزینه این نوبت به طور کامل آنلاین پرداخت شده است.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    {% if appointment.patient_note %}
+
+                        <div class="doctor-appointment-note">
+
+                            <span>
+                                توضیحات بیمار
+                            </span>
+
+                            <p>
+                                {{ appointment.patient_note }}
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+
+                    <!-- عملیات نوبت -->
+
+                    {% if appointment.status == 'pending' %}
+
+                        <div class="doctor-appointment-actions">
+
+                            {% if appointment.payment_status == 'partial' or appointment.payment_status == 'paid' %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'doctor:confirm_appointment' appointment.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="appointment-confirm-button"
+                                    >
+                                        تأیید نوبت
+                                    </button>
+
+                                </form>
+
+
+                                <div class="doctor-appointment-no-cancel">
+
+                                    <span>
+                                        این نوبت پرداخت شده و امکان لغو آن وجود ندارد.
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <div class="doctor-appointment-no-payment">
+
+                                    <span>
+                                        این نوبت هنوز پرداخت نشده است.
+                                    </span>
+
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    {% elif appointment.status == 'confirmed' %}
+
+                        <div class="doctor-appointment-actions">
+
+                            <a
+                                href="{% url 'visit:create' appointment.id %}"
+                                class="appointment-visit-button"
+                            >
+                                ثبت ویزیت
+                            </a>
+
+
+                            {% if appointment.payment_status == 'partial' or appointment.payment_status == 'paid' %}
+
+                                <div class="doctor-appointment-no-cancel">
+
+                                    <span>
+                                        این نوبت پرداخت شده و امکان لغو آن وجود ندارد.
+                                    </span>
+
+                                </div>
+
+                            {% else %}
+
+                                <form
+                                    method="post"
+                                    action="{% url 'doctor:cancel_appointment' appointment.id %}"
+                                >
+
+                                    {% csrf_token %}
+
+                                    <button
+                                        type="submit"
+                                        class="appointment-cancel-button"
+                                    >
+                                        لغو نوبت
+                                    </button>
+
+                                </form>
+
+                            {% endif %}
+
+                        </div>
+
+
+                    {% elif appointment.status == 'completed' %}
+
+                        <div class="doctor-appointment-completed">
+
+                            <span>
+                                ✓ ویزیت ثبت شده است
+                            </span>
+
+                        </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-appointments">
+
+            <p>
+                هنوز هیچ نوبتی برای شما ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

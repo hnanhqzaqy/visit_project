@@ -1,0 +1,217 @@
+{% extends 'base.html' %}
+
+{% block title %}
+دکتر {{ doctor.first_name }} {{ doctor.last_name }}
+{% endblock %}
+
+{% block content %}
+
+<div class="doctor-detail-container">
+
+    <div class="doctor-detail-card">
+
+        <div class="doctor-detail-header">
+
+            <div class="doctor-detail-image">
+
+                {% if doctor.profile_image %}
+                    <img
+                        src="{{ doctor.profile_image.url }}"
+                        alt="تصویر {{ doctor.first_name }} {{ doctor.last_name }}"
+                    >
+                {% else %}
+                    <div class="default-doctor-detail-image">
+                        👨‍⚕️
+                    </div>
+                {% endif %}
+
+            </div>
+
+            <div class="doctor-detail-title">
+
+                <h1>
+                    دکتر {{ doctor.first_name }} {{ doctor.last_name }}
+                </h1>
+
+                <p>
+                    {{ doctor.specialty }}
+                </p>
+
+                <span class="doctor-approved">
+                    ✓ پزشک تأییدشده
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <div class="doctor-detail-section">
+
+            <h2>اطلاعات حرفه‌ای</h2>
+
+            <div class="doctor-detail-grid">
+
+                <div>
+                    <span>تخصص</span>
+                    <strong>
+                        {{ doctor.specialty }}
+                    </strong>
+                </div>
+
+                <div>
+                    <span>سابقه کاری</span>
+                    <strong>
+                        {{ doctor.experience_years }} سال
+                    </strong>
+                </div>
+
+                <div>
+                    <span>شماره نظام پزشکی</span>
+                    <strong>
+                        {{ doctor.medical_system_number }}
+                    </strong>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        {% if doctor.bio %}
+
+            <div class="doctor-detail-section">
+
+                <h2>معرفی پزشک</h2>
+
+                <p class="doctor-detail-text">
+                    {{ doctor.bio|linebreaksbr }}
+                </p>
+
+            </div>
+
+        {% endif %}
+
+
+        {% if doctor.clinic_address %}
+
+            <div class="doctor-detail-section">
+
+                <h2>آدرس مطب</h2>
+
+                <p class="doctor-detail-text">
+                    {{ doctor.clinic_address|linebreaksbr }}
+                </p>
+
+            </div>
+
+        {% endif %}
+<div class="doctor-detail-section">
+
+    <h2>امتیاز و نظرات بیماران</h2>
+
+    {% if doctor.review_count %}
+
+        <div class="doctor-detail-rating">
+
+            <div>
+                <span>امتیاز پزشک</span>
+
+                <strong>
+                    {{ doctor.average_rating|floatformat:1 }}
+                    از ۵
+                </strong>
+            </div>
+
+            <div>
+                <span>تعداد نظرات</span>
+
+                <strong>
+                    {{ doctor.review_count }}
+                    نظر
+                </strong>
+            </div>
+
+        </div>
+
+        {% if reviews %}
+
+            <div class="doctor-detail-reviews">
+
+                {% for review in reviews %}
+
+                    <div class="doctor-detail-review">
+
+                        <div class="doctor-detail-review-header">
+
+                    <strong>
+    نظر بیمار
+</strong>
+
+                            <span>
+                                {{ review.rating }} از ۵
+                            </span>
+
+                        </div>
+
+                        {% if review.comment %}
+
+                            <p>
+                                {{ review.comment }}
+                            </p>
+
+                        {% endif %}
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+        <a
+            href="{% url 'review:doctor_reviews' doctor.id %}"
+            class="doctor-reviews-button"
+        >
+            مشاهده همه نظرات
+        </a>
+
+    {% else %}
+
+        <p class="doctor-no-reviews">
+            هنوز نظری برای این پزشک ثبت نشده است.
+        </p>
+
+    {% endif %}
+
+</div>
+
+        <div class="doctor-detail-actions">
+
+            {% if user.is_authenticated and user.role == 'patient' %}
+
+                <a
+                    href="{% url 'appointment:create' doctor.id %}"
+                    class="doctor-book-appointment-button"
+                >
+                    رزرو نوبت با این پزشک
+                </a>
+
+            {% endif %}
+
+
+            <a
+                href="{% url 'doctor:list' %}"
+                class="doctor-back-button"
+            >
+                بازگشت به لیست پزشکان
+            </a>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

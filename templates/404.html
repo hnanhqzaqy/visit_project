@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block title %}صفحه پیدا نشد{% endblock %}
+
+{% block content %}
+
+<section class="error-page">
+    <div class="error-page-box">
+
+        <div class="error-page-code">404</div>
+
+        <h1>صفحه پیدا نشد</h1>
+
+        <p>
+            متأسفانه صفحه‌ای که به دنبال آن هستید وجود ندارد
+            یا ممکن است آدرس آن تغییر کرده باشد.
+        </p>
+
+        <div class="error-page-actions">
+            <button type="button" class="error-back-button" onclick="history.back()">
+                بازگشت
+            </button>
+
+            <a href="{% url 'core:home' %}" class="error-home-button">
+                صفحه اصلی
+            </a>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

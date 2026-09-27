@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    ثبت‌نام پزشک
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container doctor-register">
+
+    <h1>ثبت‌نام پزشک</h1>
+
+    <form method="post">
+
+        {% csrf_token %}
+
+        {% for field in form %}
+
+            <div class="profile-field">
+
+                {{ field.label_tag }}
+                {{ field }}
+
+                {% for error in field.errors %}
+                    <div class="message error">
+                        {{ error }}
+                    </div>
+                {% endfor %}
+
+            </div>
+
+        {% endfor %}
+
+        <button type="submit">
+            ثبت درخواست
+        </button>
+
+    </form>
+
+    <p>
+        حساب کاربری دارید؟
+        <a href="{% url 'account:login' %}">
+            ورود
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}

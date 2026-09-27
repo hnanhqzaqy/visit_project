@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+{% block title %}مدیریت پزشکان{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>مدیریت پزشکان</h1>
+            <p>مشاهده و بررسی پزشکان ثبت‌شده در سیستم</p>
+        </div>
+    </div>
+
+    <div class="admin-users-table-wrapper">
+
+        <table class="admin-users-table">
+
+            <thead>
+                <tr>
+                    <th>پزشک</th>
+                    <th>شماره نظام پزشکی</th>
+                    <th>تخصص</th>
+                    <th>سابقه</th>
+                    <th>وضعیت</th>
+                    <th>عملیات</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for doctor in doctors %}
+
+                    <tr>
+
+                        <td>
+                            {{ doctor.first_name }}
+                            {{ doctor.last_name }}
+                        </td>
+
+                        <td>
+                            {{ doctor.medical_system_number }}
+                        </td>
+
+                        <td>
+                            {{ doctor.specialty }}
+                        </td>
+
+                        <td>
+                            {{ doctor.experience_years }} سال
+                        </td>
+
+                        <td>
+                            {% if doctor.status == 'approved' %}
+                                <span class="admin-status approved">
+                                    تأیید شده
+                                </span>
+                            {% elif doctor.status == 'rejected' %}
+                                <span class="admin-status rejected">
+                                    رد شده
+                                </span>
+                            {% else %}
+                                <span class="admin-status pending">
+                                    در انتظار بررسی
+                                </span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+
+                            <div class="admin-doctor-actions">
+
+                                {% if doctor.status != 'approved' %}
+                                    <form
+                                        method="post"
+                                        action="{% url 'admin_panel:update_doctor_status' doctor.id %}"
+                                    >
+                                        {% csrf_token %}
+                                        <input
+                                            type="hidden"
+                                            name="status"
+                                            value="approved"
+                                        >
+                                        <button
+                                            type="submit"
+                                            class="admin-action-button approve"
+                                        >
+                                            تأیید
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                                {% if doctor.status != 'rejected' %}
+                                    <form
+                                        method="post"
+                                        action="{% url 'admin_panel:update_doctor_status' doctor.id %}"
+                                    >
+                                        {% csrf_token %}
+                                        <input
+                                            type="hidden"
+                                            name="status"
+                                            value="rejected"
+                                        >
+                                        <button
+                                            type="submit"
+                                            class="admin-action-button reject"
+                                        >
+                                            رد
+                                        </button>
+                                    </form>
+                                {% endif %}
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="6">
+                            هنوز پزشکی ثبت نشده است.
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+{% endblock %}

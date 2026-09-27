@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block title %}
+نظرات بیماران
+{% endblock %}
+
+{% block content %}
+
+<div class="doctor-reviews-panel-container">
+
+    <div class="doctor-reviews-panel-header">
+
+        <div>
+            <h1>
+                نظرات بیماران
+            </h1>
+
+            <p>
+                امتیاز و نظرات ثبت‌شده برای شما
+            </p>
+        </div>
+
+    </div>
+
+
+    <div class="doctor-reviews-statistics">
+
+        <div class="doctor-review-stat-card">
+
+            <span>
+                میانگین امتیاز
+            </span>
+
+            <strong>
+                {% if average_rating %}
+                    {{ average_rating|floatformat:1 }}
+                    از ۵
+                {% else %}
+                    بدون امتیاز
+                {% endif %}
+            </strong>
+
+        </div>
+
+
+        <div class="doctor-review-stat-card">
+
+            <span>
+                تعداد کل نظرات
+            </span>
+
+            <strong>
+                {{ review_count }}
+                نظر
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    {% if reviews %}
+
+        <div class="doctor-reviews-panel-list">
+
+            {% for review in reviews %}
+
+                <div class="doctor-reviews-panel-card">
+
+                    <div class="doctor-reviews-panel-card-header">
+
+                        <div>
+                            <span class="doctor-review-label">
+                                امتیاز بیمار
+                            </span>
+
+                            <strong class="doctor-review-score">
+                                {{ review.rating }}
+                                از ۵
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span class="doctor-review-label">
+                                تاریخ ثبت
+                            </span>
+
+                <strong class="doctor-review-date">
+    {{ review.jalali_date }}
+</strong>
+                        </div>
+
+                    </div>
+
+
+                    {% if review.comment %}
+
+                        <div class="doctor-review-text">
+
+                            <span>
+                                متن نظر
+                            </span>
+
+                            <p>
+                                {{ review.comment|linebreaksbr }}
+                            </p>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="doctor-review-text doctor-review-no-comment">
+
+                            <p>
+                                بیمار متنی برای نظر خود ثبت نکرده است.
+                            </p>
+
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="doctor-no-reviews-panel">
+
+            <p>
+                هنوز هیچ نظری برای شما ثبت نشده است.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

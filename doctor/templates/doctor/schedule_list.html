@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% load static %}
+
+{% block title %}برنامه کاری پزشک{% endblock %}
+
+{% block extra_css %}
+<link rel="stylesheet" href="{% static 'css/base.css' %}">
+{% endblock %}
+
+{% block content %}
+
+<div class="schedule-container">
+
+    <div class="schedule-header">
+
+        <div>
+            <h1>برنامه کاری من</h1>
+            <p>
+                برنامه کاری و زمان‌های حضور خود را مدیریت کنید.
+            </p>
+        </div>
+
+        <a href="{% url 'doctor:schedule_create' %}"
+           class="schedule-add-button">
+            + افزودن برنامه کاری
+        </a>
+
+    </div>
+
+
+    {% if schedules %}
+
+        <div class="schedule-list">
+
+            {% for schedule in schedules %}
+
+                <div class="schedule-card">
+
+                    <div class="schedule-main">
+
+                        <h2>
+                            {{ schedule.get_day_of_week_display }}
+                        </h2>
+
+                        <div class="schedule-time">
+                            {{ schedule.start_time|time:"H:i" }}
+                            تا
+                            {{ schedule.end_time|time:"H:i" }}
+                        </div>
+
+                    </div>
+
+
+                    <div class="schedule-duration">
+
+                        <span>مدت هر نوبت</span>
+
+                        <strong>
+                            {{ schedule.appointment_duration }}
+                            دقیقه
+                        </strong>
+
+                    </div>
+
+
+                    <div class="schedule-status">
+
+                        {% if schedule.is_active %}
+
+                            <span class="schedule-active">
+                                فعال
+                            </span>
+
+                        {% else %}
+
+                            <span class="schedule-inactive">
+                                غیرفعال
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="schedule-actions">
+
+                        <a
+                            href="{% url 'doctor:schedule_update' schedule.id %}"
+                            class="schedule-edit-button"
+                        >
+                            ویرایش
+                        </a>
+
+
+                        <form
+                            method="post"
+                            action="{% url 'doctor:schedule_delete' schedule.id %}"
+                            onsubmit="return confirm('آیا از حذف این برنامه کاری مطمئن هستید؟');"
+                        >
+
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="schedule-delete-button"
+                            >
+                                حذف
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div class="schedule-empty">
+
+            <div class="schedule-empty-icon">
+                📅
+            </div>
+
+            <h2>
+                هنوز برنامه کاری ثبت نکرده‌اید.
+            </h2>
+
+            <p>
+                برای شروع، اولین برنامه کاری خود را اضافه کنید.
+            </p>
+
+            <a href="{% url 'doctor:schedule_create' %}">
+                افزودن برنامه کاری
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

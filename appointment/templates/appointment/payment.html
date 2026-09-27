@@ -1,0 +1,82 @@
+{% extends 'base.html' %}
+
+{% block title %}
+    پرداخت هزینه نوبت
+{% endblock %}
+
+{% block content %}
+
+<div class="auth-container">
+
+    <h1>پرداخت هزینه نوبت</h1>
+
+    <div class="payment-summary">
+
+        <div class="profile-field">
+            <strong>پزشک:</strong>
+            {{ appointment.doctor.first_name }}
+            {{ appointment.doctor.last_name }}
+        </div>
+
+        <div class="profile-field">
+            <strong>تخصص:</strong>
+            {{ appointment.doctor.specialty }}
+        </div>
+
+        <div class="profile-field">
+            <strong>مبلغ کل ویزیت:</strong>
+            {{ appointment.total_amount|floatformat:0 }}
+            تومان
+        </div>
+
+        <div class="profile-field">
+            <strong>روش پرداخت:</strong>
+
+            {% if appointment.payment_policy == 'full' %}
+                پرداخت کامل
+            {% else %}
+                پرداخت ۳۰ درصدی
+            {% endif %}
+        </div>
+
+        <div class="profile-field">
+            <strong>مبلغ قابل پرداخت آنلاین:</strong>
+
+            {{ appointment.payable_amount|floatformat:0 }}
+            تومان
+        </div>
+
+        {% if appointment.remaining_amount > 0 %}
+            <div class="profile-field">
+                <strong>مبلغ باقی‌مانده در مطب:</strong>
+
+                {{ appointment.remaining_amount|floatformat:0 }}
+                تومان
+            </div>
+        {% endif %}
+
+    </div>
+
+    <div class="message">
+        پس از پرداخت موفق، وضعیت پرداخت نوبت شما ثبت خواهد شد.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <button type="submit">
+            پرداخت
+            {{ appointment.payable_amount|floatformat:0 }}
+            تومان
+        </button>
+    </form>
+
+    <p>
+        <a href="{% url 'patient:appointments' %}">
+            بازگشت به نوبت‌های من
+        </a>
+    </p>
+
+</div>
+
+{% endblock %}

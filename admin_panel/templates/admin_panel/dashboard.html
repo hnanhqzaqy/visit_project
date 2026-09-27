@@ -1,0 +1,78 @@
+{% extends 'base.html' %}
+
+{% block title %}پنل مدیریت{% endblock %}
+
+{% block content %}
+
+<div class="admin-dashboard">
+
+    <div class="admin-dashboard-header">
+        <div>
+            <h1>پنل مدیریت</h1>
+            <p>مدیریت سیستم نوبت‌دهی پزشکی</p>
+        </div>
+    </div>
+
+    <div class="admin-dashboard-grid">
+
+        <a href="{% url 'admin_panel:users' %}" class="admin-dashboard-card">
+            <div class="admin-card-icon">👤</div>
+            <div>
+                <h2>کاربران</h2>
+                <p>مدیریت کاربران سیستم</p>
+            </div>
+        </a>
+
+        <a href="{% url 'admin_panel:doctors' %}" class="admin-dashboard-card">
+            <div class="admin-card-icon">🩺</div>
+            <div>
+                <h2>پزشکان</h2>
+                <p>مدیریت و بررسی پزشکان</p>
+            </div>
+        </a>
+
+        <a href="{% url 'admin_panel:patients' %}" class="admin-dashboard-card">
+            <div class="admin-card-icon">👥</div>
+            <div>
+                <h2>بیماران</h2>
+                <p>مدیریت بیماران سیستم</p>
+            </div>
+        </a>
+
+<a href="{% url 'admin_panel:appointments' %}" class="admin-dashboard-card">
+    <div class="admin-card-icon">📅</div>
+    <div>
+        <h2>نوبت‌ها</h2>
+        <p>مدیریت نوبت‌های ثبت‌شده</p>
+    </div>
+</a>
+
+        <a href="{% url 'admin_panel:users' %}" class="admin-dashboard-card">
+            <div class="admin-card-icon">📋</div>
+            <div>
+                <h2>ویزیت‌ها</h2>
+                <p>مدیریت اطلاعات ویزیت‌ها</p>
+            </div>
+        </a>
+
+<a href="{% url 'admin_panel:schedules' %}" class="admin-dashboard-card">
+    <div class="admin-card-icon">🕐</div>
+    <div>
+        <h2>برنامه کاری پزشکان</h2>
+        <p>مشاهده برنامه کاری پزشکان</p>
+    </div>
+</a>
+
+<a href="{% url 'admin_panel:reviews' %}" class="admin-dashboard-card">
+    <div class="admin-card-icon">⭐</div>
+    <div>
+        <h2>نظرات</h2>
+        <p>مدیریت نظرات ثبت‌شده</p>
+    </div>
+</a>
+
+    </div>
+
+</div>
+
+{% endblock %}

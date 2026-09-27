@@ -1,0 +1,343 @@
+{% extends 'base.html' %}
+
+{% block title %}رزرو نوبت{% endblock %}
+
+{% block content %}
+
+<div class="appointment-form-container">
+
+    <div class="appointment-form-card">
+
+        <h1>رزرو نوبت</h1>
+
+        <div class="appointment-doctor-info">
+
+            <strong>
+                دکتر {{ doctor.first_name }} {{ doctor.last_name }}
+            </strong>
+
+            <span>
+                {{ doctor.specialty }}
+            </span>
+
+        </div>
+
+
+        <form method="post" id="appointment-form">
+
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+
+                <div class="message error">
+
+                    {% for error in form.non_field_errors %}
+                        {{ error }}
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+
+            {{ form.appointment_date }}
+            {{ form.start_time }}
+
+
+            <div class="appointment-field">
+
+                <label>
+                    انتخاب زمان نوبت
+                </label>
+
+                <div
+                    id="weekly-slots"
+                    class="weekly-slots"
+                >
+
+                    <p class="appointment-slots-message">
+                        در حال دریافت زمان‌های آزاد...
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            {% for error in form.appointment_date.errors %}
+
+                <div class="message error">
+                    {{ error }}
+                </div>
+
+            {% endfor %}
+
+
+            {% for error in form.start_time.errors %}
+
+                <div class="message error">
+                    {{ error }}
+                </div>
+
+            {% endfor %}
+
+
+            <div class="appointment-selected-time">
+
+                <span>
+                    زمان انتخاب‌شده:
+                </span>
+
+                <strong id="selected-time">
+                    هنوز انتخاب نشده
+                </strong>
+
+            </div>
+
+
+            <div class="appointment-field">
+
+                {{ form.patient_note.label_tag }}
+
+                {{ form.patient_note }}
+
+                {% for error in form.patient_note.errors %}
+
+                    <div class="message error">
+                        {{ error }}
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+
+            <button
+                type="submit"
+                id="appointment-submit"
+                disabled
+            >
+                ثبت نوبت
+            </button>
+
+        </form>
+
+    </div>
+
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+
+    const weeklySlots =
+        document.getElementById('weekly-slots');
+
+    const dateInput =
+        document.getElementById('appointment-date');
+
+    const startTimeInput =
+        document.getElementById('start-time');
+
+    const selectedTime =
+        document.getElementById('selected-time');
+
+    const submitButton =
+        document.getElementById('appointment-submit');
+
+
+    loadWeeklySlots();
+
+
+    function loadWeeklySlots() {
+
+        weeklySlots.innerHTML =
+            '<p class="appointment-slots-message">' +
+            'در حال دریافت زمان‌های آزاد...' +
+            '</p>';
+
+
+        fetch(
+            "{% url 'appointment:weekly_slots' doctor.id %}"
+        )
+        .then(response => response.json())
+        .then(data => {
+
+            if (!data.success) {
+
+                weeklySlots.innerHTML =
+                    '<p class="appointment-slots-message">' +
+                    data.message +
+                    '</p>';
+
+                return;
+            }
+
+
+            weeklySlots.innerHTML = '';
+
+
+            data.days.forEach(function (day) {
+
+                const dayBox =
+                    document.createElement('div');
+
+                dayBox.className =
+                    'weekly-day';
+
+
+                const dayHeader =
+                    document.createElement('div');
+
+                dayHeader.className =
+                    'weekly-day-header';
+
+
+                const dayName =
+                    document.createElement('strong');
+
+                dayName.textContent =
+                    day.is_today
+                        ? 'امروز'
+                        : day.day_name;
+
+
+                const dateText =
+                    document.createElement('span');
+
+                dateText.textContent =
+                    day.jalali_date;
+
+
+                dayHeader.appendChild(dayName);
+                dayHeader.appendChild(dateText);
+
+
+                dayBox.appendChild(dayHeader);
+
+
+                const slotsBox =
+                    document.createElement('div');
+
+                slotsBox.className =
+                    'weekly-day-slots';
+
+
+                if (!day.slots.length) {
+
+                    const emptyText =
+                        document.createElement('p');
+
+                    emptyText.className =
+                        'weekly-empty';
+
+                    emptyText.textContent =
+                        'زمان خالی ندارد';
+
+                    slotsBox.appendChild(
+                        emptyText
+                    );
+
+                } else {
+
+                    day.slots.forEach(
+                        function (slot) {
+
+                            const button =
+                                document.createElement(
+                                    'button'
+                                );
+
+                            button.type = 'button';
+
+                            button.className =
+                                'appointment-slot';
+
+                            button.textContent =
+                                slot.start +
+                                ' تا ' +
+                                slot.end;
+
+
+                            button.addEventListener(
+                                'click',
+                                function () {
+
+                                    document
+                                        .querySelectorAll(
+                                            '.appointment-slot'
+                                        )
+                                        .forEach(
+                                            function (item) {
+                                                item.classList.remove(
+                                                    'selected'
+                                                );
+                                            }
+                                        );
+
+
+                                    button.classList.add(
+                                        'selected'
+                                    );
+
+
+                                    dateInput.value =
+                                        day.jalali_date;
+
+                                    startTimeInput.value =
+                                        slot.start;
+
+
+                                    selectedTime.textContent =
+                                        day.day_name +
+                                        ' ' +
+                                        day.jalali_date +
+                                        ' - ' +
+                                        slot.start +
+                                        ' تا ' +
+                                        slot.end;
+
+
+                                    submitButton.disabled =
+                                        false;
+
+                                }
+                            );
+
+
+                            slotsBox.appendChild(
+                                button
+                            );
+
+                        }
+                    );
+
+                }
+
+
+                dayBox.appendChild(
+                    slotsBox
+                );
+
+                weeklySlots.appendChild(
+                    dayBox
+                );
+
+            });
+
+        })
+        .catch(function () {
+
+            weeklySlots.innerHTML =
+                '<p class="appointment-slots-message">' +
+                'خطایی در دریافت زمان‌های آزاد رخ داد.' +
+                '</p>';
+
+        });
+
+    }
+
+});
+</script>
+
+{% endblock %}
