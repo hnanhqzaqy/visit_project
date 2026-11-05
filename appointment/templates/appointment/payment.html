@@ -1,14 +1,15 @@
+
 {% extends 'base.html' %}
 
 {% block title %}
-    پرداخت هزینه نوبت
+    اطلاعات پرداخت نوبت
 {% endblock %}
 
 {% block content %}
 
 <div class="auth-container">
 
-    <h1>پرداخت هزینه نوبت</h1>
+    <h1>اطلاعات پرداخت نوبت</h1>
 
     <div class="payment-summary">
 
@@ -40,7 +41,7 @@
         </div>
 
         <div class="profile-field">
-            <strong>مبلغ قابل پرداخت آنلاین:</strong>
+            <strong>مبلغ قابل پرداخت:</strong>
 
             {{ appointment.payable_amount|floatformat:0 }}
             تومان
@@ -58,18 +59,10 @@
     </div>
 
     <div class="message">
-        پس از پرداخت موفق، وضعیت پرداخت نوبت شما ثبت خواهد شد.
+        درگاه پرداخت آنلاین در حال حاضر در دسترس نیست.
+        اطلاعات نوبت شما ثبت شده است و پس از فعال‌سازی
+        درگاه پرداخت، امکان پرداخت فراهم خواهد شد.
     </div>
-
-    <form method="post">
-        {% csrf_token %}
-
-        <button type="submit">
-            پرداخت
-            {{ appointment.payable_amount|floatformat:0 }}
-            تومان
-        </button>
-    </form>
 
     <p>
         <a href="{% url 'patient:appointments' %}">

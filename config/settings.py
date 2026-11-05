@@ -165,7 +165,3 @@ AUTHENTICATION_BACKENDS = [
 
 
 LOGIN_URL = 'account:login'
-
-
-KPAY_MOBILE = env('KPAY_MOBILE', default='')
-KPAY_PASSWORD = env('KPAY_PASSWORD', default='')

@@ -1,16 +1,19 @@
+
 from datetime import datetime, timedelta
+
 import jdatetime
+
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
-from doctor.models import Doctor, DoctorSchedule
-from .forms import AppointmentForm
-from .models import Appointment, Payment
 from django.views.decorators.http import require_POST
 
+from doctor.models import Doctor, DoctorSchedule
 
+from .forms import AppointmentForm
+from .models import Appointment, Payment
 
 
 DAY_NAMES = {
@@ -47,6 +50,7 @@ def get_available_slots_for_date(doctor, appointment_date):
             flat=True,
         )
     )
+
     current_datetime = datetime.combine(
         appointment_date,
         schedule.start_time,
@@ -64,7 +68,6 @@ def get_available_slots_for_date(doctor, appointment_date):
     slots = []
 
     while current_datetime + duration <= end_datetime:
-
         start_time = current_datetime.time()
 
         end_time = (
@@ -72,7 +75,6 @@ def get_available_slots_for_date(doctor, appointment_date):
         ).time()
 
         if start_time not in booked_times:
-
             slots.append({
                 'start': start_time.strftime('%H:%M'),
                 'end': end_time.strftime('%H:%M'),
@@ -81,6 +83,7 @@ def get_available_slots_for_date(doctor, appointment_date):
         current_datetime += duration
 
     return slots
+
 
 @login_required
 def create_appointment(request, doctor_id):
@@ -174,15 +177,17 @@ def create_appointment(request, doctor_id):
                         )
 
                     else:
-                        existing_appointment = Appointment.objects.filter(
-                            doctor=doctor,
-                            appointment_date=appointment_date,
-                            start_time=start_time,
-                            payment_status__in=[
-                                Appointment.PAYMENT_PARTIAL,
-                                Appointment.PAYMENT_PAID,
-                            ],
-                        ).exists()
+                        existing_appointment = (
+                            Appointment.objects.filter(
+                                doctor=doctor,
+                                appointment_date=appointment_date,
+                                start_time=start_time,
+                                payment_status__in=[
+                                    Appointment.PAYMENT_PARTIAL,
+                                    Appointment.PAYMENT_PAID,
+                                ],
+                            ).exists()
+                        )
 
                         if existing_appointment:
                             form.add_error(
@@ -191,16 +196,19 @@ def create_appointment(request, doctor_id):
                             )
 
                         else:
-                            appointment = form.save(commit=False)
+                            appointment = form.save(
+                                commit=False
+                            )
 
                             appointment.doctor = doctor
                             appointment.patient = request.user
                             appointment.end_time = end_time
+
                             appointment.status = (
                                 Appointment.STATUS_PENDING
                             )
 
-                            # ثبت Snapshot اطلاعات مالی نوبت
+                            # ذخیره اطلاعات مالی نوبت
                             appointment.payment_policy = (
                                 doctor.payment_policy
                             )
@@ -257,6 +265,7 @@ def create_appointment(request, doctor_id):
         },
     )
 
+
 @login_required
 def payment(request, appointment_id):
     if request.user.role != 'patient':
@@ -294,38 +303,15 @@ def payment(request, appointment_id):
         return redirect('patient:appointments')
 
     if request.method == 'POST':
-        from .services.kpay import (
-            create_kpay_transaction,
-            KPayError,
+        messages.warning(
+            request,
+            'درگاه پرداخت آنلاین در حال حاضر فعال نیست. '
+            'پس از راه‌اندازی درگاه، امکان پرداخت فراهم خواهد شد.'
         )
 
-        try:
-            transaction = create_kpay_transaction(
-                appointment=appointment,
-                request=request,
-            )
-
-        except KPayError as exc:
-            messages.error(
-                request,
-                str(exc),
-            )
-            return redirect(
-                'appointment:payment',
-                appointment_id=appointment.id,
-            )
-
-        # ثبت تراکنش اولیه در دیتابیس
-        payment_record = Payment.objects.create(
-            appointment=appointment,
-            amount=appointment.payable_amount,
-            status=Payment.STATUS_PENDING,
-            authority=transaction['authority'],
-        )
-        request.session['kpay_payment_id'] = payment_record.id
-        request.session.modified = True
         return redirect(
-            transaction['payment_url']
+            'appointment:payment',
+            appointment_id=appointment.id,
         )
 
     return render(
@@ -334,143 +320,6 @@ def payment(request, appointment_id):
         {
             'appointment': appointment,
         },
-    )
-
-
-@login_required
-def kpay_callback(request):
-    payment_id = request.session.pop(
-        'kpay_payment_id',
-        None
-    )
-
-    if not payment_id:
-        messages.error(
-            request,
-            'اطلاعات پرداخت پیدا نشد.'
-        )
-        return redirect('patient:appointments')
-
-    payment = get_object_or_404(
-        Payment.objects.select_related(
-            'appointment',
-            'appointment__doctor',
-        ),
-        id=payment_id,
-        appointment__patient=request.user,
-        status=Payment.STATUS_PENDING,
-    )
-
-    authority = payment.authority
-
-    if not authority:
-        messages.error(
-            request,
-            'شناسه تراکنش پرداخت پیدا نشد.'
-        )
-        return redirect('patient:appointments')
-
-    from .services.kpay import KPayError
-    import requests
-
-    url = (
-        f'{settings.KPAY_BASE_URL}'
-        f'/transactions/check/{authority}'
-    )
-
-    try:
-        response = requests.get(
-            url,
-            timeout=20,
-        )
-    except requests.RequestException as exc:
-        raise KPayError(
-            'ارتباط با KPay برای بررسی پرداخت برقرار نشد.'
-        ) from exc
-
-    if response.status_code != 200:
-        messages.error(
-            request,
-            'امکان بررسی وضعیت پرداخت وجود ندارد.'
-        )
-        return redirect(
-            'appointment:payment',
-            appointment_id=payment.appointment.id,
-        )
-
-    try:
-        data = response.json()
-    except ValueError:
-        messages.error(
-            request,
-            'پاسخ KPay قابل پردازش نیست.'
-        )
-        return redirect('patient:appointments')
-
-    if data.get('is_paid') is True:
-        payment.status = Payment.STATUS_SUCCESS
-        payment.paid_at = timezone.now()
-        payment.tracking_code = authority
-        payment.save(
-            update_fields=[
-                'status',
-                'paid_at',
-                'tracking_code',
-            ]
-        )
-
-        appointment = payment.appointment
-
-        appointment.paid_amount = (
-            appointment.paid_amount
-            + payment.amount
-        )
-
-        if appointment.paid_amount >= appointment.total_amount:
-            appointment.paid_amount = appointment.total_amount
-            appointment.remaining_amount = 0
-            appointment.payment_status = (
-                Appointment.PAYMENT_PAID
-            )
-        else:
-            appointment.remaining_amount = (
-                appointment.total_amount
-                - appointment.paid_amount
-            )
-            appointment.payment_status = (
-                Appointment.PAYMENT_PARTIAL
-            )
-
-        appointment.save(
-            update_fields=[
-                'paid_amount',
-                'remaining_amount',
-                'payment_status',
-            ]
-        )
-
-        messages.success(
-            request,
-            'پرداخت با موفقیت تأیید شد.'
-        )
-
-        return redirect(
-            'appointment:payment_receipt',
-            appointment_id=appointment.id,
-        )
-
-    payment.status = Payment.STATUS_FAILED
-    payment.save(
-        update_fields=['status']
-    )
-
-    messages.error(
-        request,
-        'پرداخت تأیید نشد.'
-    )
-
-    return redirect(
-        'patient:appointments'
     )
 
 
@@ -493,7 +342,7 @@ def payment_receipt(request, appointment_id):
         patient=request.user,
     )
 
-    payment = (
+    payment_record = (
         Payment.objects
         .filter(
             appointment=appointment,
@@ -503,7 +352,7 @@ def payment_receipt(request, appointment_id):
         .first()
     )
 
-    if payment is None:
+    if payment_record is None:
         messages.error(
             request,
             'برای این نوبت رسید پرداخت تأییدشده‌ای وجود ندارد.'
@@ -523,9 +372,11 @@ def payment_receipt(request, appointment_id):
         'appointment/payment_receipt.html',
         {
             'appointment': appointment,
-            'payment': payment,
+            'payment': payment_record,
         }
     )
+
+
 @login_required
 def weekly_available_slots(request, doctor_id):
     if request.user.role != 'patient':
@@ -548,7 +399,6 @@ def weekly_available_slots(request, doctor_id):
     days = []
 
     for day_offset in range(7):
-
         current_date = today + timedelta(
             days=day_offset
         )
@@ -633,5 +483,3 @@ def cancel_appointment(request, appointment_id):
     )
 
     return redirect('patient:appointments')
-
-
