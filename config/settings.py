@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-=c(_-6$62=%1no6ld82(00!8+wer7d_$z6d!jei93kwn#v=pxo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -140,7 +140,6 @@ MAILERS = {
 
 
 
-
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
@@ -168,19 +167,10 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = 'account:login'
 
 
-
-
-
-KPAY_API_KEY = env('KPAY_API_KEY')
+KPAY_API_KEY = env('KPAY_API_KEY', default='')
 KPAY_BASE_URL = 'https://kpay.website/api/v1'
 
-KPAY_SHOP_ID = env('KPAY_SHOP_ID')
-KPAY_CARD_ID = env('KPAY_CARD_ID')
-
-
-
-
-
-KPANEL_USERNAME = env('KPANEL_USERNAME')
-KPANEL_PASSWORD = env('KPANEL_PASSWORD')
-KPANEL_FROM = env('KPANEL_FROM')
+KPAY_SHOP_ID = env('KPAY_SHOP_ID', default='')
+KPAY_MOBILE = env('KPAY_MOBILE', default='')
+KPAY_PASSWORD = env('KPAY_PASSWORD', default='')
+KPAY_CARD_ID = env('KPAY_CARD_ID', default='')
