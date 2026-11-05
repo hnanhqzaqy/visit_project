@@ -18,24 +18,22 @@ urlpatterns = [
         views.weekly_available_slots,
         name='weekly_slots',
     ),
+
     path(
         '<int:appointment_id>/cancel/',
         views.cancel_appointment,
         name='cancel',
     ),
-        path(
+
+    path(
         '<int:appointment_id>/payment/',
         views.payment,
         name='payment',
     ),
+
     path(
         'payment/<int:appointment_id>/receipt/',
         views.payment_receipt,
         name='payment_receipt',
-    ),
-    path(
-        'payment/kpay/callback/',
-        views.kpay_callback,
-        name='kpay_callback',
     ),
 ]

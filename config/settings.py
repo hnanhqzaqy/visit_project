@@ -167,10 +167,5 @@ AUTHENTICATION_BACKENDS = [
 LOGIN_URL = 'account:login'
 
 
-KPAY_API_KEY = env('KPAY_API_KEY', default='')
-KPAY_BASE_URL = 'https://kpay.website/api/v1'
-
-KPAY_SHOP_ID = env('KPAY_SHOP_ID', default='')
 KPAY_MOBILE = env('KPAY_MOBILE', default='')
 KPAY_PASSWORD = env('KPAY_PASSWORD', default='')
-KPAY_CARD_ID = env('KPAY_CARD_ID', default='')
